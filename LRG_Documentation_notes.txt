@@ -62,3 +62,38 @@ ftp://ftp.ebi.ac.uk/pub/databases/lrgex/docs/LRG_XML_schema_documentation_1_9.pd
 	Intron sequence
 
 
+Import numpy?
+
+
+ALEX IAN AND PIP
+Load xml file
+Extract info to confirm correct xml file, check xml version is correct version
+Check number of transcripts in file
+Take exon position numbers to check lrg exon coordinates to make sure not protein etc.
+LRG coord system matches??
+Start and end of exons to work out exons. 
+Get sequence of genome
+What to do if there is more than one transcript
+Check ATGC file version, coord system, number of ACGT is sequence length plus 2000
+First intron 5000 long and last only 2000 long
+
+
+CHIPO STUART AND RACHEL
+Import relevant module
+Assign passed tree to variable and get root
+Print to screen to check correct file and gene by user
+Is root lrg and extract check it is correct file
+List of characters of sequence
+Check ACGT
+Assertion length of list is same as genomic sequence to check coordinate tag last is same as length of list. Plus 2000
+Print screen genomic sequence length, need exon coordinated as key and start and end values as coordinates
+Assert key sin dictionary equals number of exons
+V COMPLICATED!
+
+
+NATALIE KIRSTY KELLY
+Two files, one LRG and one to store output
+Go through files to remove tags of info from file
+Fixed annotation, id coordinates etc
+Start end of exons
+
