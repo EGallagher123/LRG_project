@@ -12,3 +12,6 @@ for parent in LRG_tree.getiterator('fixed_annotation'):
 			genome_list = list(sequence)
 			print genome_list[0:10]
 
+import xml.etree.ElementTree as tree
+LRG_code = input('enter LRG code:')
+LRG_tree = tree.parse('LRG_code''.xml')
