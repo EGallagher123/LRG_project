@@ -16,6 +16,7 @@ for parent in LRG_tree.getiterator('fixed_annotation'):
 	for child in parent:
 		if child.tag == 'id':
 			id_no = child.text
+			print ''
 			print 'LRG file number: ', id_no
 		if child.tag == 'sequence_source':
 			seq_source = child.text
@@ -29,7 +30,7 @@ for parent in LRG_tree.getiterator('updatable_annotation'):
 				if child.tag == 'lrg_locus':
 					gene_name = child.text
 					print 'Gene name: ', gene_name
-
+					print ''
 
 #--------------------------------------------------------------------------------------------------------
 # Initiating lists for future use
@@ -84,8 +85,8 @@ for parent in LRG_tree.getiterator('fixed_annotation'): #this code finds the par
 list_of_starts = map(int, list_of_starts) 
 list_of_ends = map(int, list_of_ends)
 
-print 'Exon start positons:', list_of_starts 
-print 'Exon end positions:', list_of_ends
+#print 'Exon start positons:', list_of_starts 
+#print 'Exon end positions:', list_of_ends
 
 
 #--------------------------------------------------------------------------------------------------------
@@ -93,8 +94,8 @@ print 'Exon end positions:', list_of_ends
 
 number_of_introns = len(list_of_starts) - 1
 
-print 'number of introns: ', number_of_introns
-
+print 'Number of expected introns: ', number_of_introns
+print ''
 
 #--------------------------------------------------------------------------------------------------------
 # minuses one from all the exon start positions to get the value for the end of the intron 
@@ -102,7 +103,7 @@ print 'number of introns: ', number_of_introns
 for item in list_of_starts:
 		item_minus_1 = item - 1
 		exon_start_minus_1.append(item_minus_1)
-print 'Exon start - 1: ', exon_start_minus_1
+#print 'Exon start - 1: ', exon_start_minus_1
 
 
 #--------------------------------------------------------------------------------------------------------
@@ -110,11 +111,11 @@ print 'Exon start - 1: ', exon_start_minus_1
 
 exon_start_minus_1.pop(0)
 
-print 'starts: ', exon_start_minus_1
+#print 'starts: ', exon_start_minus_1
 
 list_of_ends.pop(number_of_introns)
 
-print 'ends: ', list_of_ends
+#print 'ends: ', list_of_ends
 
 
 #--------------------------------------------------------------------------------------------------------
@@ -130,12 +131,12 @@ for item in range(len_lis_starts):
 	b = exon_start_minus_1[item]
 	intron_seq = genome_list[a:b]
 	intron_seq_string = ''.join(intron_seq)
-	print a
-	print b	
+	print 'Intron number: ', item + 1
+	print 'Intron position: ', a, '-', b	
 	print intron_seq_string
-
+	print ''
 #--------------------------------------------------------------------------------------------------------
-'''
+
 '''
                 		for child in child:	#the next code will look for the children of exon under the coordinates tag. 
                 			if child.tag == 'coordinates':
