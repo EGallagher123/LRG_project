@@ -1,6 +1,8 @@
 #--------------------------------------------------------------------------------------------------------
 # importing and parsing the XML document
 
+out_file = open('gene_introns.fasta', 'a')
+
 LRG_code = raw_input('Please enter your LRG file name (with file extension): ')
 
 import xml.etree.ElementTree as tree 
@@ -135,7 +137,31 @@ for item in range(len_lis_starts):
 	print 'Intron position: ', a, '-', b	
 	print intron_seq_string
 	print ''
+	item_string = str(item + 1)
+	Intron_seq_label = '> intron|' 
+	item_and_seq_label = Intron_seq_label + item_string
+	out_file.write(item_and_seq_label)
+	word_start = '|Start|'
+	out_file.write(word_start)
+	a_string = str(a)
+	out_file.write(a_string)
+	word_end = '|End|'
+	out_file.write(word_end)
+	b_string = str(b)
+	out_file.write(b_string)
+	out_file.write("\n")
+	out_file.write(intron_seq_string)
+	out_file.write("\n")
+	out_file.write("\n")
+
+
+
 #--------------------------------------------------------------------------------------------------------
+
+
+
+
+
 
 '''
                 		for child in child:	#the next code will look for the children of exon under the coordinates tag. 
