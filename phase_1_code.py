@@ -1,10 +1,10 @@
 #--------------------------------------------------------------------------------------------------------
 # importing and parsing the XML document
 
-#LRG_code = input('enter your LRG code (with file extension): ')
+LRG_code = raw_input('Please enter your LRG file name (with file extension): ')
 
 import xml.etree.ElementTree as tree 
-LRG_tree = tree.parse('LRG_10.xml')
+LRG_tree = tree.parse(LRG_code)
 root = LRG_tree.getroot()
 
 
@@ -19,7 +19,16 @@ for parent in LRG_tree.getiterator('fixed_annotation'):
 			print 'LRG file number: ', id_no
 		if child.tag == 'sequence_source':
 			seq_source = child.text
-			print 'Reference sequence source: ', seq_source			
+			print 'Reference sequence source: ', seq_source
+
+# This section prints out the name of the gene from the xml file
+for parent in LRG_tree.getiterator('updatable_annotation'):
+	for child in parent:
+		if child.tag == 'annotation_set' and child.attrib['type'] == 'lrg':
+			for child in child:
+				if child.tag == 'lrg_locus':
+					gene_name = child.text
+					print 'Gene name: ', gene_name
 
 
 #--------------------------------------------------------------------------------------------------------
@@ -126,7 +135,7 @@ for item in range(len_lis_starts):
 	print intron_seq_string
 
 #--------------------------------------------------------------------------------------------------------
-
+'''
 '''
                 		for child in child:	#the next code will look for the children of exon under the coordinates tag. 
                 			if child.tag == 'coordinates':
