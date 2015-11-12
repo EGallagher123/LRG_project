@@ -1,6 +1,6 @@
 import xml.etree.ElementTree as tree
 
-#parses sml file
+#parses xml file
 LRG_tree= tree.parse('LRG_263.xml')
 root = LRG_tree.getroot()
 
