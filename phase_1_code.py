@@ -1,9 +1,25 @@
 #--------------------------------------------------------------------------------------------------------
 # importing and parsing the XML document
 
-import xml.etree.ElementTree as tree #this code is used to test and it is a copy of the code already written in the "LRG_import_xml.py file"
-LRG_tree = tree.parse('LRG_263.xml')
+#LRG_code = input('enter your LRG code (with file extension): ')
+
+import xml.etree.ElementTree as tree 
+LRG_tree = tree.parse('LRG_10.xml')
 root = LRG_tree.getroot()
+
+
+#--------------------------------------------------------------------------------------------------------
+# this section will extract information from the xml file such as the LRG id number for the gene and the reference sequence source.
+# this information (LRG id_no) will be used in a later section of code in order to check that the correct exon locations are correct.
+
+for parent in LRG_tree.getiterator('fixed_annotation'):
+	for child in parent:
+		if child.tag == 'id':
+			id_no = child.text
+			print 'LRG file number: ', id_no
+		if child.tag == 'sequence_source':
+			seq_source = child.text
+			print 'Reference sequence source: ', seq_source			
 
 
 #--------------------------------------------------------------------------------------------------------
@@ -27,7 +43,7 @@ for parent in LRG_tree.getiterator('fixed_annotation'):
 			sequence = child.text
 			#onvert the variable to a list
 			genome_list = list(sequence)
-			print genome_list[:10]
+			#print genome_list[:10]
 
 
 #--------------------------------------------------------------------------------------------------------
@@ -46,14 +62,13 @@ for parent in LRG_tree.getiterator('fixed_annotation'): #this code finds the par
 
 				for child in child:
 					if child.tag == 'coordinates':
-						if child.attrib['coord_system'] == 'LRG_263': #change this to be the ID number at the begining
+						if child.attrib['coord_system'] == id_no: #change this to be the ID number at the begining
            						start_coord_exon = child.attrib['start'] 
            						list_of_starts.append(start_coord_exon)
            						end_coord_exon = child.attrib['end']
            						list_of_ends.append(end_coord_exon)
            						strand_no = child.attrib['strand'] #this ensures that the correct strand is being looked at. It also enables another check as only the genomic sequence has strand number information. If no strand information is present, it is likely that the information is not correct about the start and the end. 
-                					
-
+                				
 #--------------------------------------------------------------------------------------------------------
 #turns the strins into integers in the list of starts and end exon positions
 
@@ -97,10 +112,11 @@ print 'ends: ', list_of_ends
 # Getting the intron sequence using intron coordinates
 
 
-len_lis_starts = len(list_of_starts) -1
+len_lis_starts = len(list_of_starts) -1 #to set the range for the loop using the number of introns
 
 
-for item in range(len_lis_starts):
+#loops through each intron using the coordinates stored in the list of ends and the exon start minus 1 paired to give the boundaries of the introns. 
+for item in range(len_lis_starts): 
 	a = list_of_ends[item]
 	b = exon_start_minus_1[item]
 	intron_seq = genome_list[a:b]
@@ -109,22 +125,8 @@ for item in range(len_lis_starts):
 	print b	
 	print intron_seq_string
 
-'''
+#--------------------------------------------------------------------------------------------------------
 
-item = 0
-#for item in list_of_ends:
-while item <= number_of_introns:
-	a = list_of_ends[item]
-	b = exon_start_minus_1[item]
-	intron_seq = genome_list[a:b]
-	item += 1
-
-	print a
-	print b
-	print intron_seq
-
-
-'''
 '''
                 		for child in child:	#the next code will look for the children of exon under the coordinates tag. 
                 			if child.tag == 'coordinates':
@@ -140,4 +142,3 @@ while item <= number_of_introns:
                 					print ''
 '''
 
-	 
