@@ -1,0 +1,16 @@
+1) import/parse xml file to make "LRG_file" variable.
+2) define a function called "imp_genome" to turn genome sequence into list.
+	<fixed annotation>
+		<sequence>
+3) define a function called "imp_positions" using for loop to get exon positions.
+	<fixed annotation>
+		<transcript>
+			<exon>
+			   <coordinates>
+4) define a function called "get_intron_positions"
+	call "imp_positions" function to get "exon_start" and "exon_end" 
+	and return intron positions.
+5) define a function called "get_intron_slices"
+	call "imp_genome" as genome_list and call intron positions 
+	as "intron_start" and "intron_end" to get slices from list.
+6) export data into file
