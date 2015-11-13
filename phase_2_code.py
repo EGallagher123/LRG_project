@@ -1,65 +1,63 @@
+''''''
+import xml.etree.ElementTree as tree
+
+''' Four lists are initialised for future use: list_of_starts; list_of_ends; exon_start_minus_1; intron_seq '''
+list_of_starts = []
+list_of_ends = []
+exon_start_minus_1 = []
+intron_seq = []
+
+'''A FASTA file is opened and the output of this code will be saved within this file.'''
 out_file = open('gene_introns.fasta', 'w')
 
+'''The user is asked to input a filename using 'raw_input' and this is saved as 'LRG_code'''
 LRG_code = raw_input('Please enter your LRG file name (with file extension): ')
 
-import xml.etree.ElementTree as tree 
+'''The xml file corresponding to 'LRG_code' is parsed using ElementTree'''
 LRG_tree = tree.parse(LRG_code)
 
 #--------------------------------------------------------------------------------------------------------
-# this section will extract information from the xml file such as the LRG id number for the gene and the reference sequence source.
-# this information (LRG id_no) will be used in a later section of code in order to check that the correct exon locations are correct.
+'''Section 1: This section extracts information from the xml file (LRG ID, RefSeq ID, Gene name)'''
 
 def get_id_no(parsed_tree):
-	'''This function returns the LRG ID number'''
+	'''The 'get_id_no' function returns the LRG ID number using a for loop'''
 	for parent in parsed_tree.getiterator('fixed_annotation'):
 		for child in parent:
 			if child.tag == 'id':
 				id_no = child.text
 			return id_no
 
-id_no = get_id_no(LRG_tree)
-print 'LRG ID: ', id_no
-
 
 def get_seq_source(parsed_tree):
-	'''This function returns the reference sequence'''
+	'''The 'get_seq_source' function returns the reference sequence ID using a for loop'''
 	for parent in parsed_tree.getiterator('fixed_annotation'):
 		for child in parent:						
 			if child.tag == 'sequence_source':
 				return child.text				
 
-seq_source = get_seq_source(LRG_tree)
-print 'RefSeq ID: ', seq_source
-
 
 def get_gene_name(parsed_tree):
-	''' This section returns the name of the gene from the xml file'''
+	''' The 'get_gene_name' function returns the name of the gene using a for loop'''
 	for parent in parsed_tree.getiterator('updatable_annotation'):
 		for child in parent:
 			if child.tag == 'annotation_set' and child.attrib['type'] == 'lrg':
 				for child in child:
 					if child.tag == 'lrg_locus':
 						return child.text
-					
-			
+	
+'''The get_id_no, get_seq_source and get_gene_name functions are called and the outputs are printed'''
+id_no = get_id_no(LRG_tree)
+print 'LRG ID: ', id_no	
+seq_source = get_seq_source(LRG_tree)
+print 'RefSeq ID: ', seq_source
 gene_name = get_gene_name(LRG_tree)
 print 'Gene: ', gene_name
 
-
 #--------------------------------------------------------------------------------------------------------
-# Initiating lists for future use
-
-list_of_starts = []
-list_of_ends = []
-exon_start_minus_1 = []
-intron_seq = []
-
-
-#--------------------------------------------------------------------------------------------------------
-# Gets genome sequence from XML file and converts from string into a list
+'''Section 2: This section gets the entire genome sequence from the xml file and converts it from a string into a list'''
 
 def get_genome_list(parsed_tree):
-	'''This function gets the genome sequence from the XML file and checks that all nucleotides are allowed'''
+	'''The 'get_genome_list' function gets the genome sequence from the XML file and checks that all nucleotides are allowed'''
 	nucleotide_list = ['A', 'T', 'G', 'C']
 	non_nucleotides = 0
 	is_nucleotides = 0
@@ -85,12 +83,13 @@ def get_genome_list(parsed_tree):
 	else:
 		return genome_list
 
+'''The output from get_genome_list function is saved within the 'genome_list' variable for future use'''
 genome_list = get_genome_list(LRG_tree)
 
 
  #-------------------------------------------------------------------------------------------------------
-#For loops to extract inforamtion about the start and end positions of the exons, alongside checks to make sure that the correct information is being extracted. start and end positions are put into lists.
-
+'''Section 3: This section uses for loops to extract the start and end positions of the exons from the xml file and checks the correct informatrion in extracted. The start positions of all exons are added
+   added to list_of_starts and the end positions are added to list_of_ends.'''
 for parent in LRG_tree.getiterator('fixed_annotation'): #this code finds the parent in the tree
     for child in parent: #the firs child that needs to be identified is the transcript child
             if child.tag == 'transcript': #if the child tag is transcript then we want to print out the transcript name
@@ -114,16 +113,10 @@ for parent in LRG_tree.getiterator('fixed_annotation'): #this code finds the par
              				
 #--------------------------------------------------------------------------------------------------------
 #turns the strins into integers in the list of starts and end exon positions
-
+'''The lists with exon positions are composed of strings so the 'map' python function converts these into lists of integers. Then, the length of each list minus 1 is used to calculate the total number of 
+   introns and this number is printed.'''
 list_of_starts = map(int, list_of_starts) 
 list_of_ends = map(int, list_of_ends)
-
-#print 'Exon start positons:', list_of_starts 
-#print 'Exon end positions:', list_of_ends
-
-
-#--------------------------------------------------------------------------------------------------------
-#calculates the number of introns in the sequence by taking the number of exons and minusing one.
 
 number_of_introns = len(list_of_starts) - 1
 
@@ -131,37 +124,30 @@ print 'Number of expected introns: ', number_of_introns
 print ''
 
 #--------------------------------------------------------------------------------------------------------
-# minuses one from all the exon start positions to get the value for the end of the intron 
-
+'''For list_of_starts, the intron end positions are calculated using each start position minus 1'''
 for item in list_of_starts:
 		item_minus_1 = item - 1
 		exon_start_minus_1.append(item_minus_1)
-#print 'Exon start - 1: ', exon_start_minus_1
 
 
 #--------------------------------------------------------------------------------------------------------
-# removes the first start value of the exon, and the last end value of the exon as these are not needed to calculate introns
-
+'''The 'pop' python function is used to remove the first value in the exon_start_minus_1 list and remove the last value in the list_of_ends list. This finalises the intron start and end positions'''
 exon_start_minus_1.pop(0)
-
-#print 'starts: ', exon_start_minus_1
-
 list_of_ends.pop(number_of_introns)
 
-#print 'ends: ', list_of_ends
-
-
 #--------------------------------------------------------------------------------------------------------
-# Getting the intron sequence using intron coordinates
-
+'''Section 4: This section takes the intron positions, maps them to the genome_list and takes slices from the list, converting them into strings of nucleotides. These outputs are then exported into
+   the FASTA file created earlier'''
 
 len_lis_starts = len(list_of_starts) -1 #to set the range for the loop using the number of introns
-
 
 #loops through each intron using the coordinates stored in the list of ends and the exon start minus 1 paired to give the boundaries of the introns. 
 for item in range(len_lis_starts): 
 	a = list_of_ends[item]
 	b = exon_start_minus_1[item]
+
+	assert(b>=a), 'Intron end is smaller than intron start'
+
 	intron_seq = genome_list[a:b]
 	intron_seq_string = ''.join(intron_seq)
 	print 'Intron number: ', item + 1
