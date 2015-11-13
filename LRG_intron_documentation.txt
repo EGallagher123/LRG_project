@@ -1,0 +1,125 @@
+Intron Extractions from LRG XML files.
+
+This code has been designed to be able to extract intron sequences and other details from LRG XML files.
+
+The code has been designed to be run from the command line.
+
+The output expected in the command line is:
+
+* LRG_ID
+
+* Reference sequence ID
+
+* Gene name
+
+* intron number
+
+* Intron start
+
+* Intron end
+
+* Intron sequence
+
+* FASTA file including the intron numbers, positions and sequence. The tile will be named ‘LRG_number’_’reference-number’_’gene-name’.fasta)
+
+------------------------------------------------------------------------------------------------------------------------------
+
+Imports and initial set up:
+
+The module imported at the beginning of the script is ElementTree. This module has been developed to parse XML files and is widely used to analyse these file types.
+
+Four lists are initialised for future use: list_of_starts; list_of_ends; exon_start_minus_1; intron_seq
+
+The user is asked to input a filename using 'raw_input' and this is saved as 'LRG_code’
+
+The xml file corresponding to 'LRG_code' is parsed using ElementTree
+
+------------------------------------------------------------------------------------------------------------------------------
+
+Section 1:
+
+This section extracts information from the xml file (LRG ID, RefSeq ID, Gene name)
+
+There are three functions defined in this section:
+
+1. def get_id_no(parsed_tree):
+
+The 'get_id_no' function returns the LRG ID number using a for loop
+
+2. def get_seq_source(parsed_tree):
+
+The 'get_seq_source' function returns the reference sequence ID using a for loop
+
+3. def get_gene_name(parsed_tree):
+
+The 'get_gene_name' function returns the name of the gene using a for loop
+
+The get_id_no, get_seq_source and get_gene_name functions are called and the outputs are printed to the command line. These are not yet included in the Fasta file but is a possibility for future development.
+
+------------------------------------------------------------------------------------------------------------------------------
+
+Section 2:
+
+This section gets the entire genome sequence from the xml file and converts it from a string into a list
+
+This section contains one function:
+
+1. def get_genome_list(parsed_tree):
+
+The 'get_genome_list' function gets the genome sequence from the XML file and checks that all nucleotides are allowed.
+
+This step checks that the nucleotides contained in the list created from the details in the XML file are all A, T, G and C. If there are any nucleotides that are not these letters then an error message will be printed to the command line that says: 'Error: non-nucleotide present'. If there are no errors then nothing will be printed.
+
+The output from get_genome_list function is saved within the 'genome_list' variable for future use. If the user would like to access the fill genome list then a simple print statement of ‘print genome_list’ can be added to this section.
+
+------------------------------------------------------------------------------------------------------------------------------
+
+Section 3:
+
+This section uses for loops to extract the start and end positions of the exons from the xml file and checks the correct information in extracted. The start positions of all exons are added to list_of_starts and the end positions are added to list_of_ends. It also tells the user the number of exons that are expected in the output.
+
+This section of script does not currently use functions, and therefore this is something that can be improved in the next phase of development.
+
+The code finds the parent in the tree and then searches for the relevant children using pre-defined tags. There are a number of checks in place in this section.
+
+Firstly the correct transcript is chosen by checking that the id_no which is extracted using the get_id_no_function must be the same as the child tag in order to extract the exon positions. These ensure that no protein sequence positions are extracted instead of genome positions.
+
+The strand number is also extracted which is another unique feature to the genome positions. If no strand information is present, it is likely that the information is not correct about the start and the end.
+
+The lists with exon positions are composed of strings so the 'map' python function converts these into lists of integers. Then, the length of each list minus 1 is used to calculate the total number of introns and this number is printed.
+
+For list_of_starts, the intron end positions are calculated using each start position minus 1. The 'pop' python function is used to remove the first value in the exon_start_minus_1 list and remove the last value in the list_of_ends list. This finalises the intron start and end positions.
+
+------------------------------------------------------------------------------------------------------------------------------
+
+Section 4:
+
+This section takes the intron positions, maps them to the genome_list. It does this by taking slices from the list, converting them into strings of nucleotides.
+
+The output of this code includes the intron number, and position, and the sequence in the command line terminal.
+
+A FASTA file is opened and the output of this code will be saved within this file.
+
+This section will also write the fasta file to include the intron number, the start and end coordinates of the intron, and also gives the intron sequence.
+
+An assert statement is also present in this section. This assert statement ensures that the start position comes numerically before the end position in the genome sequence. If there is an error in any of the steps of extracting, processing or slicing the genome then an attribute error saying 'Intron end is smaller than intron start' will appear. Currently this will only work for genes encoded on strand 1, and therefore requires development in future versions.
+
+------------------------------------------------------------------------------------------------------------------------------
+
+Future Work:
+
+Multiple transcripts:
+
+Currently the script does not work with multiple transcripts. If there is more than one transcript in a section (Fixed annotation section) then a new user input would be created for the user to select the transcript that they wish to analyse.
+
+Functions:
+
+Functions for section three and four need to be created. Due to time limitations this was not possible. The creation of these functions would tidy up the code to make it more readable, and useful in the future.
+
+File type exports:
+
+Additional functions that we would like to add are options to create different filetypes, such as XML. Currently only a Fasta option is available. We would like to develop the code to include a user option to create different file types.
+
+Strand information:
+
+The strand information is already extracted from the XML file. A function therefore needs to be added to take into account strand information in order to check whether the intron start and end positions created are accurate. 
