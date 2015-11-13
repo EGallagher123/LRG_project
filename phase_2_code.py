@@ -1,4 +1,4 @@
-''''''
+'''Generating intron information from LRG files'''
 import xml.etree.ElementTree as tree
 
 ''' Four lists are initialised for future use: list_of_starts; list_of_ends; exon_start_minus_1; intron_seq '''
@@ -140,34 +140,37 @@ list_of_ends.pop(number_of_introns)
    the FASTA file created earlier'''
 
 len_lis_starts = len(list_of_starts) -1 #to set the range for the loop using the number of introns
+out_file = open(str(id_no) + '_' + str(seq_source) + '_' + str(gene_name) + '_' + '.fasta', 'w') #this creates a new file named using the summary details found previously.
 
 #loops through each intron using the coordinates stored in the list of ends and the exon start minus 1 paired to give the boundaries of the introns. 
 for item in range(len_lis_starts): 
-	a = list_of_ends[item]
-	b = exon_start_minus_1[item]
+	start = list_of_ends[item]
+	end = exon_start_minus_1[item]
 
-	assert(b>=a), 'Intron end is smaller than intron start'
+	# if the end of the intron is less then the start of the intron, an error will print to the command line.
+	assert(end>=start), 'Intron end is smaller than intron start'
 
-	intron_seq = genome_list[a:b]
+	# this creates the variables for the output for the FASTA file. This prints the start and end positions and sequence to the command line.
+	intron_seq = genome_list[start:end]
 	intron_seq_string = ''.join(intron_seq)
 	print 'Intron number: ', item + 1
-	print 'Intron position: ', a, '-', b	
+	print 'Intron position: ', start, '-', end	
 	print intron_seq_string
 	print ''
 	item_string = str(item + 1)
 	Intron_seq_label = '> intron|' 
 	item_and_seq_label = Intron_seq_label + item_string
 
-	out_file = open(str(id_no) + '_' + str(seq_source) + '_' + str(gene_name) + '_' + '.fasta', 'a')
+	# this takes the output and writes to a FASTA file created at the beginning of this section.
 	out_file.write(item_and_seq_label)
 	word_start = '|Start|'
 	out_file.write(word_start)
-	a_string = str(a)
-	out_file.write(a_string)
+	start_string = str(start)
+	out_file.write(start_string)
 	word_end = '|End|'
 	out_file.write(word_end)
-	b_string = str(b)
-	out_file.write(b_string)
+	end_string = str(end)
+	out_file.write(end_string)
 	out_file.write("\n")
 	out_file.write(intron_seq_string)
 	out_file.write("\n")
